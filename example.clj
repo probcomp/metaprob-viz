@@ -2,10 +2,11 @@
   (:require [metaprob-viz.viz :as viz]
             [clojure.java.browse :as browse]))
 
-;; start visualization server
+;; start visualization server.
 (viz/start-server!)
 
-;; declare a visualization, using the "dist" visualization
+;; declare a visualization, using the "dist" renderer, available at
+;; the indicated path from the root of this repo.
 (def vid (viz/add-viz! "public/vue/dist/" [[-2.0 -1.0    0 1.0 2.0]
                                            [-2.0 -1.0    0 1.0 2.0]]))
 
