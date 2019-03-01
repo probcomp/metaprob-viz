@@ -160,11 +160,12 @@
    viz-id))
 
 (defn watch-timeout
-  "Given an atom, a function on that value of the atom which returns
-  `nil` or a non-nil value, and a timeout, return an async channel that will
-  either place the non-nil result of `(f v)` on the channel if there is one
-  initially or if one appears within `timeout` seconds. Otherwise,
-  place `nil` on the channel."
+  "Given an atom `a`, a function `f` over `a`, and a timeout in seconds,
+  watch the value of `(f a)` for at most `t-o` seconds. If the value
+  of `(f a)` is initially non-nil, or `a` changes and `(f a)` becomes
+  non-nil within `t-o` seconds, return that non-nil value. If `(f a)`
+  remain `nil` for `t-o` seconds, return `nil`. This function can
+  block for `t-o` seconds."
 
   [a f t-o]
   (let [c            (chan)
@@ -200,7 +201,6 @@
   "Given a visualization ID, returns the HTML for this visualization. If
   the HTML is not set yet, block for `timeout` seconds waiting for
   HTML to arrive. Return nil if no HTML arrives before `t-o` seconds."
-
   [viz-id t-o]
   (watch-timeout visualizations
                  (fn [v] (get-in v [viz-id :html]))
