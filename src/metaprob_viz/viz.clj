@@ -117,11 +117,9 @@
             :html nil})
     id))
 
-
-;;; make this variadic, to accept a trace-id (to replace)
 (defn put-trace!
-  [viz-id trace]
-  (let [trace-id (uuid)]
+  [viz-id trace & [trace-id]]
+  (let [trace-id (or trace-id (uuid))]
     (swap! visualizations assoc-in [viz-id :traces trace-id] trace)
     (doall (map (fn [channel]
                   (httpkit/send! channel (json/generate-string
@@ -204,11 +202,11 @@
   visualization. Also takes a timeout: will wait for `timeout` seconds
   for a client to connect, and for a connected client to return
   HTML. If either timeout expires, returns `nil`"
-  [viz-id timeout]
+  [viz-id & [timeout]]
   (some-> viz-id
-          (viz-client timeout)
+          (viz-client (or timeout 5))
           (client-save-html viz-id)
-          (viz-html timeout)))
+          (viz-html (or timeout 5))))
 
 (defn start-server! []
   (reset! server (httpkit/run-server
