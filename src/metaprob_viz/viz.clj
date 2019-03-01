@@ -1,6 +1,5 @@
 (ns metaprob-viz.viz
   (:require [org.httpkit.server :as httpkit]
-            [clojure.java.browse :as browse]
             [clojure.core.async :as async :refer [chan alt!! timeout put! <!!]]
             [compojure.core :refer [defroutes GET ]]
             [compojure.route :refer [files not-found]]
@@ -153,12 +152,6 @@
 
   viz-id)
 
-
-((fn [c]
-   (httpkit/send! c
-                  (json/generate-string {:action "saveHTML"}))
-   viz-id))
-
 (defn watch-timeout
   "Given an atom `a`, a function `f` over `a`, and a timeout in seconds,
   watch the value of `(f a)` for at most `t-o` seconds. If the value
@@ -217,64 +210,14 @@
           (client-save-html viz-id)
           (viz-html timeout)))
 
-(defn stop-server []
-  (when-not (nil? @server)
-    (@server :timeout 100)
-    (reset! server nil)))
-
-(comment
-  ;; create a server and start it listening
+(defn start-server! []
   (reset! server (httpkit/run-server
                   (-> #'routes
                       (wrap-ws ws-handler)
                       wrap-viz)
-                  {:port 8081}))
+                  {:port 8081})))
 
-  ;; stop the running server
-  (stop-server)
-
-  ;; clear any visualizations (does not update the clients)
-  (reset! visualizations {})
-
-
-  ;; add an example visualization
-  (def vid (add-viz! "public/vue/dist/" [[-2.0 -1.0    0 1.0 2.0]
-                                         [-2.0 -1.0    0 1.0 2.0]]))
-
-  ;; try visiting `http://localhost:8081/<vid>/`
-  (println vid)
-  (browse/browse-url (str "http://localhost:8081/" vid "/"))
-
-  ;; define an example trace
-  (def t {:slope 1.4
-          :intercept 0
-          :inlier_std 0.2
-          :outlier_std 1.2
-          :outliers [false false true false true]})
-
-  (def tt {:slope 0.5
-           :intercept -1
-           :inlier_std 0.1
-           :outlier_std 2.1
-           :outliers [false false true false true]})
-
-
-  ;; add that trace. this should update the connected client
-  (def tid (put-trace! vid t))
-  (def ttid (put-trace! vid tt))
-
-
-  (get-html vid 1)
-
-  (get-html vid 100)
-
-  (reset! visualizations {})
-  (swap! visualizations assoc-in [1241 :clients 10] 1)
-
-  (def cid (future (viz-client 1241 5)))
-  @cid
-
-
-  ;; remove the trace
-  (delete-trace! vid tid)
-  )
+(defn stop-server! []
+  (when-not (nil? @server)
+    (@server :timeout 100)
+    (reset! server nil)))
