@@ -12,7 +12,7 @@ See `example.clj`, which should be usable in a REPL.
 
 The API consists of:
 
-#### start-server! and (stop-server!)
+#### start-server! and stop-server!
 
     (start-server!)
     (stop-server!)
@@ -23,7 +23,7 @@ client renderer.
 
 #### add-viz!
 
-    (add-viz path info)
+    (add-viz! path info)
 
 Declare the existence of a visualization. Takes the on-disk path to a
 renderer, and any arbitrary extra data the renderer will require for
@@ -84,3 +84,5 @@ More demonstration of integration with notebooks. May involve some
 more programming.
 
 Potential refactor- not the prettiest code.
+- use component / system / et al for managing server state
+- separate `viz.clj` into coherent namespaces
