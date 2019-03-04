@@ -208,12 +208,12 @@
           (client-save-html viz-id)
           (viz-html (or timeout 5))))
 
-(defn start-server! []
+(defn start-server! [port]
   (reset! server (httpkit/run-server
                   (-> #'routes
                       (wrap-ws ws-handler)
                       wrap-viz)
-                  {:port 8081})))
+                  {:port port})))
 
 (defn stop-server! []
   (when-not (nil? @server)
