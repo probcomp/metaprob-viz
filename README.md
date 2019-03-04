@@ -14,7 +14,7 @@ The API consists of:
 
 #### start-server! and stop-server!
 
-    (start-server!)
+    (start-server! 8081)
     (stop-server!)
 
 Starts and stops a metaprob-viz server instance listening on

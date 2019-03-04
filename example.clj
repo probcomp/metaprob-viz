@@ -3,7 +3,7 @@
             [clojure.java.browse :as browse]))
 
 ;; start visualization server.
-(viz/start-server!)
+(viz/start-server! 8081)
 
 ;; declare a visualization, using the "dist" renderer, available at
 ;; the indicated path from the root of this repo.
