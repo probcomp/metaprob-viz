@@ -9,3 +9,7 @@
                :frameBorder 0
                :width "100%"
                :height height}])))
+
+(defn display-in-notebook [f v-id & [h]]
+  (open-in-notebook v-id h)
+  (display/html (viz/get-html v-id)))

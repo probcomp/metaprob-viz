@@ -211,6 +211,9 @@
           (client-save-html viz-id)
           (viz-html (or timeout 5))))
 
+(defn save-to-file [viz-id path]
+  (spit path (get-html viz-id)))
+
 (defn set-port! [p]
   (reset! port p))
 
