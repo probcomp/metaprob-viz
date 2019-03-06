@@ -17,8 +17,5 @@
         :target "_blank"}
     "Click to open visualization window"]))
 
-(defn display-in-notebook [f v-id & [h]]
-  ;; (browse/browse-url (viz/viz-url v-id))
-  ;; (open-in-notebook v-id h)
-  (f)
+(defn display-in-notebook [v-id]
   (display/html (viz/get-html v-id)))
