@@ -11,11 +11,13 @@
                :width "100%"
                :height height}])))
 
-(defn open-in-tab [v-id]
+(defn open-in-popup [v-id]
   (display/hiccup-html
    [:a {:href (viz/viz-url v-id)
-        :target "_blank"}
-    "Click to open visualization window"]))
+        :onclick (str "window.open(this.href,
+                                   'vizWindow-" v-id "',
+                                   'toolbar=no, location=no, status=no, menubar=no, scrollbars=yes, resizable=yes'); return false;")}
+    "<h4>Click to open visualization window</h4>"]))
 
 (defn display-in-notebook [v-id]
   (display/html (viz/get-html v-id)))
