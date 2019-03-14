@@ -10,9 +10,17 @@ also used in the GenViz example.
 
 See `example.clj`, which should be usable in a REPL.
 
-The API consists of:
+### Example notebook
 
-#### start-server! and stop-server!
+Included is a Jupyter notebook and a Docker container in which to run
+it, which demonstrates the use of metaprob-viz.
+
+Build the container with `make docker-build`. When that completes, try
+the notebook with `make docker-notebook`.
+
+### API
+
+#### viz/start-server! and stop-server!
 
     (start-server! 8081)
     (stop-server!)
@@ -21,7 +29,7 @@ Starts and stops a metaprob-viz server instance listening on
 port 8081. This server manages HTTP and websocket traffic from the
 client renderer.
 
-#### add-viz!
+#### viz/add-viz!
 
     (add-viz! path info)
 
@@ -36,7 +44,7 @@ Example:
     (add-viz! "public/vue/dist/" [[-2.0 -1.0    0 1.0 2.0]
                                   [-2.0 -1.0    0 1.0 2.0]])
 
-#### put-trace!
+#### viz/put-trace!
 
     (put-trace! visualization-id trace-data & [trace-id])
 
@@ -58,13 +66,13 @@ Example:
        :outlier_std 1.2
        :outliers [false false true false true]})
 
-#### delete-trace!
+#### viz/delete-trace!
 
     (delete-trace visualization-id trace-id)
 
 Removes a trace from the internal state and from any connected clients.
 
-#### get-html
+#### viz/get-html
 
     (get-html! visualization-id & [timeout])
 
@@ -78,11 +86,25 @@ call can block for up to `timeout` seconds.
 Returns a string containing the generated HTML, or `nil` if the
 visualization does not exist or we time out waiting for the client.
 
-### Remaining work
+#### viz/save-to-file
 
-More demonstration of integration with notebooks. May involve some
-more programming.
+    (save-to-file visualization-id path)
 
-Potential refactor- not the prettiest code.
-- use component / system / et al for managing server state
-- separate `viz.clj` into coherent namespaces
+Saves the static HTML of the visualization at the path indicated (path
+is relative to the root of the running Clojure process)
+
+#### notebook/open-in-notebook
+
+    (open-in-notebook visualization-id & [height])
+
+Meant for use in Clojupyter notebook, this function, when evaluated in
+a cell, will open a dynamic visualization in the notebook. It takes an
+optional height argument, in pixels.
+
+#### notebook/display-in-notebook
+
+    (display-in-notebook visualization-id & [height])
+
+Like `open-in-notebook`, this opens a visualization in the notebook,
+but the visualization is static: it won't change even as the traces
+which it shows change.

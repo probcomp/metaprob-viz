@@ -7,11 +7,11 @@
             [ring.util.response :refer [file-response]]
             [cheshire.core :as json]))
 
+(defonce port (atom 8081))
 (defonce server (atom nil))
 (defonce visualizations (atom {}))
 
 (defn uuid [] (str (java.util.UUID/randomUUID)))
-
 ;;;;;;;;;;
 ;; websocket handling
 ;;;;;;;;;;
@@ -197,6 +197,9 @@
                  (fn [v] (get-in v [viz-id :html]))
                  t-o))
 
+(defn viz-url [v-id]
+  (str "http://127.0.0.1:" @port "/" v-id "/"))
+
 (defn get-html
   "Given a visualization ID, return the HTML from that
   visualization. Also takes a timeout: will wait for `timeout` seconds
@@ -208,12 +211,19 @@
           (client-save-html viz-id)
           (viz-html (or timeout 5))))
 
-(defn start-server! [port]
+(defn save-to-file [viz-id path]
+  (spit path (get-html viz-id)))
+
+(defn set-port! [p]
+  (reset! port p))
+
+(defn start-server! [ & [p]]
+  (set-port! (or p 8081))
   (reset! server (httpkit/run-server
                   (-> #'routes
                       (wrap-ws ws-handler)
                       wrap-viz)
-                  {:port port})))
+                  {:port @port})))
 
 (defn stop-server! []
   (when-not (nil? @server)
