@@ -29,6 +29,13 @@ Starts and stops a metaprob-viz server instance listening on
 port 8081. This server manages HTTP and websocket traffic from the
 client renderer.
 
+`(start-server!)` is variadic, and may be called with arguments
+specifying the port, or IP and port, to listen on:
+
+    (start-server!)                      ;; defualt, start on 127.0.0.1:8081
+    (start-server! 9999)                 ;; start on 127.0.0.1:9999
+    (start-server! "192.168.1.100" 8088) ;; start on 192.168.1.100:8088
+
 #### viz/add-viz!
 
     (add-viz! path info)
