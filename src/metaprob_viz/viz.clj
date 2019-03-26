@@ -8,6 +8,7 @@
             [cheshire.core :as json]))
 
 (defonce port (atom 8081))
+(defonce ip (atom "127.0.0.1"))
 (defonce server (atom nil))
 (defonce visualizations (atom {}))
 
@@ -198,7 +199,7 @@
                  t-o))
 
 (defn viz-url [v-id]
-  (str "http://127.0.0.1:" @port "/" v-id "/"))
+  (str "http://" @ip ":" @port "/" v-id "/"))
 
 (defn get-html
   "Given a visualization ID, return the HTML from that
@@ -217,15 +218,24 @@
 (defn set-port! [p]
   (reset! port p))
 
-(defn start-server! [ & [p]]
-  (set-port! (or p 8081))
-  (reset! server (httpkit/run-server
-                  (-> #'routes
-                      (wrap-ws ws-handler)
-                      wrap-viz)
-                  {:port @port})))
+(defn set-ip! [i]
+  (reset! ip i))
+
+(defn start-server!
+  ([] (start-server! @ip @port))
+  ([p] (start-server! @ip p))
+  ([i p]
+   (do
+     (set-ip! i)
+     (set-port! p)
+     (reset! server (httpkit/run-server
+                     (-> #'routes
+                         (wrap-ws ws-handler)
+                         wrap-viz)
+                     {:port @port})))))
 
 (defn stop-server! []
   (when-not (nil? @server)
     (@server :timeout 100)
     (reset! server nil)))
+1
